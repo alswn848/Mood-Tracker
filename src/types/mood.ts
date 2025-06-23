@@ -1,5 +1,5 @@
 // 감정 종류
-export type MoodType = 'happy' | 'playful' | 'affectionate' | 'in Love' | 'sad' | 'annoyed' | 'Shocked';
+export type MoodType = 'happy' | 'playful' | 'affectionate' | 'inLove' | 'sad' | 'annoyed' | 'shocked' | 'neutral';
 
 // 감정 기록 인터페이스
 export interface MoodEntry {
