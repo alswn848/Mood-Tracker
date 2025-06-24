@@ -1,54 +1,51 @@
-# React + TypeScript + Vite
+# Mood Tracker 😺
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**당신의 감정을 기록하고 돌아보세요.**  
+하루의 감정을 이모지로 기록하고, 시각적인 히스토리를 통해 감정 변화를 추적할 수 있는 웹 애플리케이션입니다.
 
-Currently, two official plugins are available:
+## 🌈 주요 기능
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 😺 이모지를 통한 감정 기록
+- 📝 감정에 대한 간단한 메모 저장
+- 📅 달력과 테이블 뷰를 통한 감정 히스토리 조회
+- 📊 감정 분석 및 통계 제공 (추가 예정)
 
-## Expanding the ESLint configuration
+## 📁 폴더 구조
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```
+src/
+├── components/       # 재사용 가능한 UI 컴포넌트들
+├── pages/            # 페이지 단위 컴포넌트
+├── styles/           # 전역 스타일 및 테마
+├── utils/            # 유틸 함수 및 로컬 스토리지 헬퍼
+├── App.tsx           # 전체 라우터 구성
+├── main.tsx          # 앱 엔트리포인트
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🛠️ 사용 기술
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- React + TypeScript
+- styled-components
+- Vite
+- GitKraken (버전 관리)
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+## 🚀 설치 및 실행
+
+```bash
+# 1. 레포 클론
+git clone https://github.com/alswn848/mood-tracker.git
+
+# 2. 디렉토리 이동
+cd mood-tracker
+
+# 3. 패키지 설치
+npm install
+
+# 4. 개발 서버 실행
+npm run dev
 ```
+
+---
+
+### 🤍 당신의 감정도 소중합니다.
+*매일의 작은 감정 하나하나를 기록하며 나를 더 잘 알아가요.*
