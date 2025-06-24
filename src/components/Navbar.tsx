@@ -31,9 +31,18 @@ const StyledLink = styled(Link)`
   text-decoration: none;
   color: #555;
   font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
 
   &:hover {
     color: #000;
+    background-color: #f8f9fa;
+  }
+
+  &.active {
+    color: #ffd966;
+    background-color: #fff3cd;
   }
 `;
 
@@ -43,7 +52,7 @@ export const Navbar: React.FC = () => {
             <Logo>Mood Tracker</Logo>
             <NavLinks>
                 <StyledLink to="/">홈</StyledLink>
-                <StyledLink to="/calendar">캘린더</StyledLink>
+                <StyledLink to="/history">히스토리</StyledLink>
                 <StyledLink to="/stats">통계</StyledLink>
             </NavLinks>
         </Nav>
