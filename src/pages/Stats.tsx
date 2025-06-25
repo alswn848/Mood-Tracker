@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { MoodStats } from '../components/MoodStats';
-import type { MoodEntry } from '../types/mood';
-import { loadMoodEntries } from '../utils/storage';
+import { MoodStats } from '../components/MoodStats';  // 감정 통계 차트 컴포넌트
+import type { MoodEntry } from '../types/mood';       // 감정 기록 타입
+import { loadMoodEntries } from '../utils/storage';   // 저장소에서 감정 기록 불러오는 함수
 
+// 스타일 컴포넌트들 선언 - 최대 너비, 중앙 정렬, 여백 등
 const StatsContainer = styled.div`
     max-width: 1200px;
     margin: 0 auto;
@@ -109,43 +110,50 @@ const EmptyState = styled.div`
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 `;
 
+// 기간 타입 선언 - 존나 직관적임
 type Period = '7days' | '30days' | '90days' | 'all' | 'custom';
 
 export const Stats: React.FC = () => {
+    // 전체 기록 상태
     const [entries, setEntries] = useState<MoodEntry[]>([]);
+    // 선택된 분석 기간 상태 (기본 30일)
     const [selectedPeriod, setSelectedPeriod] = useState<Period>('30days');
+    // 커스텀 시작, 종료 날짜 상태
     const [customStartDate, setCustomStartDate] = useState('');
     const [customEndDate, setCustomEndDate] = useState('');
+    // 필터링된 기록 상태 (선택 기간에 따른 필터 결과)
     const [filteredEntries, setFilteredEntries] = useState<MoodEntry[]>([]);
+    // 로딩 상태
     const [isLoading, setIsLoading] = useState(true);
 
-    // 데이터 로드
+    // 컴포넌트 마운트 시 로컬 저장소에서 기록 불러오기
     useEffect(() => {
         const loadData = () => {
             try {
                 const savedEntries = loadMoodEntries();
-                setEntries(savedEntries);
+                setEntries(savedEntries);  // 불러온 기록 상태에 세팅
             } catch (error) {
                 console.error('Failed to load entries:', error);
             } finally {
-                setIsLoading(false);
+                setIsLoading(false);       // 불러오기 끝났으면 로딩 끔
             }
         };
 
         loadData();
     }, []);
 
-    // 기간별 필터링
+    // 선택된 기간 혹은 커스텀 기간이 바뀔 때마다 기록 필터링 처리
     useEffect(() => {
         const filterEntriesByPeriod = () => {
             if (entries.length === 0) {
-                setFilteredEntries([]);
+                setFilteredEntries([]); // 기록 없으면 빈 배열 세팅
                 return;
             }
 
             const now = new Date();
             let startDate: Date;
 
+            // 기간별 필터 기준일 계산
             switch (selectedPeriod) {
                 case '7days':
                     startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -157,22 +165,26 @@ export const Stats: React.FC = () => {
                     startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
                     break;
                 case 'custom':
+                    // 커스텀 기간 지정 시 날짜가 모두 있으면 필터링, 없으면 전체 반환
                     if (customStartDate && customEndDate) {
-                        const filtered = entries.filter(entry => 
+                        const filtered = entries.filter(entry =>
                             entry.date >= customStartDate && entry.date <= customEndDate
                         );
                         setFilteredEntries(filtered);
-                        return;
+                        return; // 커스텀은 여기서 끝내버림
                     }
                     setFilteredEntries(entries);
                     return;
                 case 'all':
                 default:
+                    // 전체 기간 선택 시 전체 기록 반환
                     setFilteredEntries(entries);
                     return;
             }
 
+            // 기간 기준일을 ISO 문자열 YYYY-MM-DD 형식으로 변환
             const startDateString = startDate.toISOString().slice(0, 10);
+            // 기준일 이후 기록만 필터링
             const filtered = entries.filter(entry => entry.date >= startDateString);
             setFilteredEntries(filtered);
         };
@@ -180,13 +192,14 @@ export const Stats: React.FC = () => {
         filterEntriesByPeriod();
     }, [entries, selectedPeriod, customStartDate, customEndDate]);
 
-    // 커스텀 기간 적용
+    // 커스텀 기간 적용 버튼 눌렀을 때
     const applyCustomPeriod = () => {
         if (customStartDate && customEndDate) {
-            setSelectedPeriod('custom');
+            setSelectedPeriod('custom'); // 선택 기간을 커스텀으로 변경해 필터링 트리거
         }
     };
 
+    // 로딩 중일 때 보여줄 화면
     if (isLoading) {
         return (
             <StatsContainer>
@@ -195,6 +208,7 @@ export const Stats: React.FC = () => {
         );
     }
 
+    // 기록이 없으면 빈 상태 메시지 보여주기
     if (entries.length === 0) {
         return (
             <StatsContainer>
@@ -209,6 +223,7 @@ export const Stats: React.FC = () => {
         );
     }
 
+    // 정상적인 메인 렌더링 부분
     return (
         <StatsContainer>
             <Header>
@@ -216,35 +231,37 @@ export const Stats: React.FC = () => {
                 <Subtitle>감정 변화와 패턴을 분석해보세요</Subtitle>
             </Header>
 
+            {/* 기간 선택 UI */}
             <PeriodSelector>
                 <PeriodTitle>분석 기간 선택</PeriodTitle>
                 <PeriodButtons>
-                    <PeriodButton 
-                        active={selectedPeriod === '7days'} 
+                    <PeriodButton
+                        active={selectedPeriod === '7days'}
                         onClick={() => setSelectedPeriod('7days')}
                     >
                         최근 7일
                     </PeriodButton>
-                    <PeriodButton 
-                        active={selectedPeriod === '30days'} 
+                    <PeriodButton
+                        active={selectedPeriod === '30days'}
                         onClick={() => setSelectedPeriod('30days')}
                     >
                         최근 30일
                     </PeriodButton>
-                    <PeriodButton 
-                        active={selectedPeriod === '90days'} 
+                    <PeriodButton
+                        active={selectedPeriod === '90days'}
                         onClick={() => setSelectedPeriod('90days')}
                     >
                         최근 90일
                     </PeriodButton>
-                    <PeriodButton 
-                        active={selectedPeriod === 'all'} 
+                    <PeriodButton
+                        active={selectedPeriod === 'all'}
                         onClick={() => setSelectedPeriod('all')}
                     >
                         전체 기간
                     </PeriodButton>
                 </PeriodButtons>
 
+                {/* 커스텀 기간 입력 UI */}
                 <CustomPeriodSection>
                     <PeriodTitle>사용자 지정 기간</PeriodTitle>
                     <DateInputs>
@@ -268,16 +285,18 @@ export const Stats: React.FC = () => {
                 </CustomPeriodSection>
             </PeriodSelector>
 
+            {/* 필터링된 기록을 기반으로 통계 컴포넌트 렌더링 */}
             <MoodStats entries={filteredEntries} />
 
+            {/* 선택 기간 및 필터된 데이터 수 표시 */}
             {selectedPeriod !== 'all' && (
-                <div style={{ 
-                    textAlign: 'center', 
-                    marginTop: '2rem', 
+                <div style={{
+                    textAlign: 'center',
+                    marginTop: '2rem',
                     color: '#666',
                     fontSize: '0.9rem'
                 }}>
-                    {selectedPeriod === 'custom' 
+                    {selectedPeriod === 'custom'
                         ? `${customStartDate} ~ ${customEndDate} 기간의 통계`
                         : `최근 ${selectedPeriod === '7days' ? '7일' : selectedPeriod === '30days' ? '30일' : '90일'} 통계`
                     }

@@ -5,9 +5,11 @@ import styled from 'styled-components';
 import type { MoodEntry } from '../types/mood';
 import { MOOD_CONFIG } from '../types/mood';
 
+// 캘린더 선택 값 타입 정의 (단일 날짜 또는 날짜 범위)
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
+// 캘린더 전체 wrapper 스타일
 const CalendarWrapper = styled.div`
     max-width: 100%;
     width: 100%;
@@ -25,7 +27,7 @@ const CalendarWrapper = styled.div`
         border-radius: 12px;
     }
 
-    /* 요일 헤더 스타일 - 간격 크게, 텍스트 크기 키우고 가운데 정렬 */
+    // 요일 헤더 스타일 커스터마이징
     .react-calendar__month-view__weekdays__weekday {
         display: flex;
         align-items: center;
@@ -33,7 +35,6 @@ const CalendarWrapper = styled.div`
         padding: 12px 0;
         font-weight: 700;
         font-size: 1.1rem;
-        
         text-align: center;
         width: 14.28%;
         background: none;
@@ -41,18 +42,16 @@ const CalendarWrapper = styled.div`
         margin-bottom: 10px;
     }
 
+    // 요일 텍스트 스타일
     .react-calendar__month-view__weekdays__weekday abbr {
         text-decoration: none !important;
         font-size: 1.1rem;
         color: #b45309;
-        margin: 0;
-        padding: 0;
-        line-height: 1;
         font-weight: 700;
-        display: inline-block;
+        line-height: 1;
     }
 
-    /* 날짜 타일 넓히고 패딩 늘림 */
+    // 날짜 타일 스타일
     .react-calendar__tile {
         padding: 16px 0;
         margin: 2px 0;
@@ -71,7 +70,7 @@ const CalendarWrapper = styled.div`
         justify-content: center;
     }
 
-    /* 날짜 타일 호버 & 포커스 */
+    // 날짜 타일 hover, focus 시 스타일
     .react-calendar__tile:hover,
     .react-calendar__tile:focus {
         background: #fef3c7;
@@ -81,14 +80,14 @@ const CalendarWrapper = styled.div`
         transform: scale(1.05);
     }
 
-    /* 선택된 날짜 */
+    // 선택된 날짜 스타일
     .react-calendar__tile--active {
         background: #facc15 !important;
         color: white !important;
         border-radius: 12px !important;
     }
 
-    /* 오늘 날짜 강조 */
+    // 오늘 날짜 스타일
     .react-calendar__tile--now {
         background: #fef3c7 !important;
         color: #92400e !important;
@@ -97,6 +96,7 @@ const CalendarWrapper = styled.div`
     }
 `;
 
+// 감정을 나타내는 색상 원형 아이콘
 const MoodIndicator = styled.div<{ moodColor: string }>`
     position: absolute;
     top: 5px;
@@ -109,6 +109,7 @@ const MoodIndicator = styled.div<{ moodColor: string }>`
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 `;
 
+// 마우스를 올렸을 때 감정 설명을 보여주는 툴팁
 const MoodTooltip = styled.div<{ moodColor: string }>`
     position: absolute;
     bottom: 100%;
@@ -126,6 +127,7 @@ const MoodTooltip = styled.div<{ moodColor: string }>`
     transition: all 0.3s ease;
     pointer-events: none;
 
+    // 툴팁 아래 삼각형 꼬리
     &::after {
         content: '';
         position: absolute;
@@ -137,6 +139,7 @@ const MoodTooltip = styled.div<{ moodColor: string }>`
     }
 `;
 
+// 각 날짜 타일을 감싸는 wrapper (hover 시 툴팁 보이게 처리)
 const CalendarTile = styled.div`
     position: relative;
     width: 100%;
@@ -152,34 +155,38 @@ const CalendarTile = styled.div`
     }
 `;
 
+// props: 감정 기록 리스트
 interface Props {
     entries: MoodEntry[];
 }
 
-// 오늘 날짜를 YYYY-MM-DD (로컬)로 반환하는 함수 추가
+// 날짜 객체를 'YYYY-MM-DD' 형태의 문자열로 변환하는 유틸 함수
 function getLocalDateString(date: Date) {
     return date.getFullYear() + '-' +
         String(date.getMonth() + 1).padStart(2, '0') + '-' +
         String(date.getDate()).padStart(2, '0');
 }
 
+// 감정 캘린더 컴포넌트 정의
 export const MoodCalendar: React.FC<Props> = ({ entries }) => {
+    // 선택된 날짜 상태값
     const [value, setValue] = useState<Value>(new Date());
 
+    // 날짜 선택 시 상태 업데이트
     const handleChange = (val: Value) => {
         setValue(val);
     };
 
-    // 특정 날짜의 감정 기록 찾기
+    // 특정 날짜에 해당하는 감정 기록 찾아 반환
     const getMoodForDate = (date: Date): MoodEntry | null => {
         const dateString = getLocalDateString(date);
         return entries.find(entry => entry.date === dateString) || null;
     };
 
-    // 커스텀 타일 렌더링
+    // 캘린더 타일 안에 감정 이모지 및 툴팁 렌더링
     const tileContent = ({ date }: { date: Date }) => {
         const moodEntry = getMoodForDate(date);
-        
+
         return (
             <CalendarTile>
                 {moodEntry && (
@@ -195,7 +202,7 @@ export const MoodCalendar: React.FC<Props> = ({ entries }) => {
         );
     };
 
-    // 날짜 클릭 핸들러
+    // 날짜 클릭 시 감정 정보 alert로 표시
     const handleDateClick = (date: Date) => {
         const moodEntry = getMoodForDate(date);
         if (moodEntry) {
@@ -210,10 +217,10 @@ export const MoodCalendar: React.FC<Props> = ({ entries }) => {
             <Calendar
                 onChange={handleChange}
                 value={value}
-                calendarType="iso8601"
+                calendarType="iso8601" // 월요일 시작
                 locale="ko-KR"
-                tileContent={tileContent}
-                onClickDay={handleDateClick}
+                tileContent={tileContent} // 타일 안에 감정 이모지 렌더링
+                onClickDay={handleDateClick} // 날짜 클릭 시 감정 정보 alert
                 formatShortWeekday={(_, date) => ['월', '화', '수', '목', '금', '토', '일'][date.getDay() === 0 ? 6 : date.getDay() - 1]}
             />
         </CalendarWrapper>
